@@ -9,7 +9,7 @@ pipeline {
     stages {
         stage('Clone Repository') {
             steps {
-                git 'https://github.com/sjmhub25/b.git'
+                git 'https://github.com/sowjanya-m025/b.git'
             }
         }
 
