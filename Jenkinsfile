@@ -27,7 +27,7 @@ pipeline {
         stage('Tag') {
             steps {
                 // Tag the image for Docker Hub
-                 sh "docker tag devp ${IMAGE}"
+                 sh "docker tag myapp ${IMAGE}"
             }
         }
 
