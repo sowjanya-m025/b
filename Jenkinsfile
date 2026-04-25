@@ -2,45 +2,53 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE = "sowjanya2510/app-image"
-        DOCKER_CREDS_ID = 'dockerhub-creds'
+        IMAGE = "sowjanya2510/myapp:v1"
+        CREDS = "dockerhub-creds"
+        // Ensure Jenkins can find Docker CLI
+        PATH = "/usr/local/bin:${env.PATH}"
     }
 
     stages {
-        stage('Clone Repository') {
+
+        stage('Checkout') {
             steps {
-                git 'https://github.com/sowjanya-m025/b.git'
+                // Checkout your main branch
+                git branch: 'main', url: 'https://github.com/sowjanya-m025/b.git'
+            }
+        }
+        
+        stage('Build') {
+            steps {
+                // Build Docker image
+                sh 'docker build -t myapp .'
             }
         }
 
-        stage('Build Docker Image') {
+        stage('Tag') {
             steps {
-                sh "docker build -t ${DOCKER_IMAGE}:latest ."
+                // Tag the image for Docker Hub
+                 sh "docker tag devp ${IMAGE}"
             }
         }
 
-        stage('Login and Push') {
+        stage('Login') {
             steps {
+                // Login to Docker Hub using Jenkins credentials
                 withCredentials([usernamePassword(
-                    credentialsId: "${DOCKER_CREDS_ID}",
-                    usernameVariable: 'DOCKER_USER',
-                    passwordVariable: 'DOCKER_PASS'
+                    credentialsId: CREDS,
+                    usernameVariable: 'USER',
+                    passwordVariable: 'PASS'
                 )]) {
-                    sh """
-                    echo \$DOCKER_PASS | docker login -u \$DOCKER_USER --password-stdin
-                    docker push ${DOCKER_IMAGE}:latest
-                    """
+                    sh 'echo $PASS | docker login -u $USER --password-stdin'
                 }
             }
         }
-    }
-
-    post {
-        success {
-            echo 'Image successfully built and pushed to Docker Hub'
-        }
-        failure {
-            echo 'Pipeline failed'
+        
+        stage('Push') {
+            steps {
+                // Push the image to Docker Hub
+                sh "docker push ${IMAGE}"
+            }
         }
     }
-}
+} 
