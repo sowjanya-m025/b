@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        IMAGE = "sowjanya2510/my-nginx-app"
+        IMAGE = "sowjanya2510/java-app"
         CREDS = "dockerhub-creds"
         // Ensure Jenkins can find Docker CLI
         PATH = "/usr/local/bin:${env.PATH}"
@@ -20,14 +20,14 @@ pipeline {
         stage('Build') {
             steps {
                 // Build Docker image
-                sh 'docker build -t my-nginx-app .'
+                sh 'docker build -t java-app .'
             }
         }
 
         stage('Tag') {
             steps {
                 // Tag the image for Docker Hub
-                 sh "docker tag my-nginx-app ${IMAGE}"
+                 sh "docker tag java-app ${IMAGE}"
             }
         }
 
