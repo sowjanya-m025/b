@@ -1,9 +1,4 @@
-FROM eclipse-temurin:17
-
+FROM python:3.10
 WORKDIR /app
-
-COPY app.java .
-
-RUN javac app.java
-
-CMD ["java", "app”]
+COPY . .
+CMD ["python","app.py”]
